@@ -1,7 +1,8 @@
 streamlit==1.45.0
 langchain==0.1.17
 langchain-community==0.0.36
-openai==1.14.2
+openai==1.10.0       # ✅ This version works with langchain 0.1.17
 chromadb==1.0.7
 tiktoken==0.9.0
+
 
