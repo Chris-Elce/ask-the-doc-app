@@ -1,1 +1,1 @@
-# ask-the-doc-app
+# Note: this machine learning application is in progress. 
