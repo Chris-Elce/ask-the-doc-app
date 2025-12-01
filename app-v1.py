@@ -1,8 +1,10 @@
 import streamlit as st
+
+from langchain.llms import OpenAI
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_community.vectorstores import Chroma
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
 from langchain.chains import RetrievalQA
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 
 
 def generate_response(uploaded_file, openai_api_key, query_text):
@@ -16,8 +18,8 @@ def generate_response(uploaded_file, openai_api_key, query_text):
         text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
         texts = text_splitter.create_documents(documents)
 
-        # Select embeddings (note: use api_key, not openai_api_key)
-        embeddings = OpenAIEmbeddings(api_key=openai_api_key)
+        # Select embeddings (older LangChain API: openai_api_key=)
+        embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
 
         # Create a vectorstore from documents
         db = Chroma.from_documents(texts, embeddings)
@@ -25,13 +27,10 @@ def generate_response(uploaded_file, openai_api_key, query_text):
         # Create retriever interface
         retriever = db.as_retriever()
 
-        # Create QA chain using ChatOpenAI
-        llm = ChatOpenAI(
-            api_key=openai_api_key,
-            temperature=0,
-            model="gpt-4o-mini",  # can be any chat-capable OpenAI model
-        )
+        # Create LLM with your key (older LangChain LLM wrapper)
+        llm = OpenAI(openai_api_key=openai_api_key, temperature=0)
 
+        # Create QA chain
         qa = RetrievalQA.from_chain_type(
             llm=llm,
             chain_type="stuff",
@@ -76,10 +75,8 @@ with st.form("myform", clear_on_submit=True):
             with st.spinner("Calculating..."):
                 response = generate_response(uploaded_file, openai_api_key, query_text)
                 result.append(response)
-                # Delete the API key from memory after use
+                # Drop the key from memory
                 del openai_api_key
 
 if len(result):
     st.info(result[0])
-
-
