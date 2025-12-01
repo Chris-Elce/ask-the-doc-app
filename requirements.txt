@@ -1,9 +1,15 @@
 streamlit
-langchain
-langchain-community
-langchain-openai
+
+# Use the older LangChain that matches the assignment samples
+langchain==0.1.0
+
+# Use the older OpenAI client that works with this LangChain version
+openai==0.28.1
+
+# Vector store + tokenization
 chromadb
 tiktoken
+
 
 
 
